@@ -10,6 +10,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import CenterSpinner from '../Util/CenterSpinner';
 import gql from 'graphql-tag';
 import {useMutation} from 'react-apollo';
+import { FETCH_TODOS} from './Todos';
 
 const UPDATE_TODO = gql`
   mutation ($id: Int, $isCompleted: Boolean) {
@@ -34,8 +35,26 @@ const UPDATE_TODO = gql`
   }
 `;
 
+const REMOVE_TODO = gql`
+  mutation ($id: Int) {
+    delete_todos(
+      where: {
+        id: {
+          _eq: $id
+        }
+      }
+    ) {
+      affected_rows
+    }
+  }
+`
+
 const TodoItem = ({ item, isPublic }) =>  {
+
   const [updateToDo, {loading: updating, error:updateError}] = useMutation(UPDATE_TODO);
+
+  const [deleteTodo, {loading: deleting, error: deleteError}] = useMutation(REMOVE_TODO);
+
   const userIcon = () => {
     if (!isPublic) {
       return null;
@@ -82,7 +101,31 @@ const TodoItem = ({ item, isPublic }) =>  {
 
   const deleteButton = () => {
     if (isPublic) return null;
+
+    const updateCache = (client) => {
+      const data = client.readQuery({
+        query: FETCH_TODOS,
+        variables: {
+          isPublic,
+        }
+      });
+      const newData = {
+        todos: data.todos.filter((t) => t.id !== item.id)
+      }
+      client.writeQuery({
+        query: FETCH_TODOS,
+        variables:{
+          isPublic,
+        },
+        data: newData
+      })
+    }
     const remove = () => {
+      if (deleting) return;
+        deleteTodo({
+          variables: {id: item.id},
+          update: updateCache
+        })
     };
     return (
       <View style={styles.deleteButton}>
@@ -90,6 +133,7 @@ const TodoItem = ({ item, isPublic }) =>  {
           name="delete"
           size={26}
           onPress={remove}
+          disabled = {deleting}
           color={"#BC0000"}
         />
       </View>
