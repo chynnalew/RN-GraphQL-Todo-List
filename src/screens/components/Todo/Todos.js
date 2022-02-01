@@ -6,10 +6,30 @@ import {
   View,
   FlatList,
 } from 'react-native';
+import gql from 'graphql-tag';
 import TodoItem from './TodoItem';
 import LoadOlder from './LoadOlder';
 import LoadNewer from './LoadNewer';
 import CenterSpinner from '../Util/CenterSpinner';
+
+export const FETCH_TODOS = gql`
+query{
+  todos(
+    order_by: {
+      created_at: desc
+    },
+    where: {is_public: {_eq: false}}
+  ) {
+    id
+    title
+    is_completed
+    created_at
+    is_public
+    user{
+      name
+    }
+  }
+}`
 
 const Todos = ({ isPublic, ...props }) => {
 
