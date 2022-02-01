@@ -8,10 +8,34 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import CenterSpinner from '../Util/CenterSpinner';
+import gql from 'graphql-tag';
+import {useMutation} from 'react-apollo';
 
+const UPDATE_TODO = gql`
+  mutation ($id: Int, $isCompleted: Boolean) {
+    update_todos (
+      _set: {
+        is_completed: $isCompleted
+      },
+      where: {
+        id: {
+          _eq: $id
+        }
+      }
+    ) {
+      returning {
+        id
+        title
+        is_completed
+        created_at
+        is_public
+      }
+    }
+  }
+`;
 
 const TodoItem = ({ item, isPublic }) =>  {
-
+  const [updateToDo, {loading: updating, error:updateError}] = useMutation(UPDATE_TODO);
   const userIcon = () => {
     if (!isPublic) {
       return null;
@@ -29,10 +53,18 @@ const TodoItem = ({ item, isPublic }) =>  {
   const updateCheckbox = () => {
     if (isPublic) return null;
     const update = () => {
+      if(updating) return;
+      updateToDo({
+        variables: {
+          id: item.id,
+          isCompleted: !item.is_completed
+        }
+      })
     }
     return (
       <TouchableOpacity
         style={item.is_completed ? styles.completedCheckBox : styles.checkBox}
+        disabled={updating}
         onPress={update}
       >
         {null}
