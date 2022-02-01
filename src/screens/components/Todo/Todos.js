@@ -10,15 +10,16 @@ import gql from 'graphql-tag';
 import TodoItem from './TodoItem';
 import LoadOlder from './LoadOlder';
 import LoadNewer from './LoadNewer';
+import {useQuery} from '@apollo/react-hooks';
 import CenterSpinner from '../Util/CenterSpinner';
 
 export const FETCH_TODOS = gql`
-query{
+query ($isPublic: Boolean) {
   todos(
     order_by: {
       created_at: desc
     },
-    where: {is_public: {_eq: false}}
+    where: {is_public: {_eq: $isPublic}}
   ) {
     id
     title
@@ -35,30 +36,30 @@ const Todos = ({ isPublic, ...props }) => {
 
   const [newTodosExist, setNewTodosExist] = React.useState(true);
 
-  const data = {
-    todos: [
-      {
-        id: "1",
-        title: "This is todo 1",
-        is_completed: true,
-        is_public: isPublic,
-        user: {
-          id: "1",
-          name: "user1"
-        }
-      },
-      {
-        id: "2",
-        title: "This is todo 2",
-        is_completed: false,
-        is_public: isPublic,
-        user: {
-          id: "2",
-          name: "user2"
-        }
-      }
-    ]
-  }
+  // const data = {
+  //   todos: [
+  //     {
+  //       id: "1",
+  //       title: "This is todo 1",
+  //       is_completed: true,
+  //       is_public: isPublic,
+  //       user: {
+  //         id: "1",
+  //         name: "user1"
+  //       }
+  //     },
+  //     {
+  //       id: "2",
+  //       title: "This is todo 2",
+  //       is_completed: false,
+  //       is_public: isPublic,
+  //       user: {
+  //         id: "2",
+  //         name: "user2"
+  //       }
+  //     }
+  //   ]
+  // }
 
   return (
     <View style={styles.container}>
