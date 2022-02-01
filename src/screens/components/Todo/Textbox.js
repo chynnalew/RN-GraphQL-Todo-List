@@ -6,14 +6,40 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import gql from 'graphql-tag';
+import {useMutation} from 'react-apollo';
 
-
+const INSERT_TODO = gql`
+  mutation ($text: String!, $isPublic: Boolean){
+    insert_todos(
+      objects:[{
+        title: $text,
+        is_public: $isPublic
+      }]
+    ){
+      returning {
+        id
+        title
+        is_completed
+        created_at
+        is_public
+        user{
+          name
+        }
+      }
+    }
+  }
+`
 const Textbox = ({isPublic}) => {
 
   const [text, setText] = React.useState('');
 
+  const[insertTodo, {loading, error}] = useMutation(INSERT_TODO);
   const submit = () => {
     setText('');
+    insertTodo({
+      variables: {text, isPublic}
+    })
   }
 
   return (

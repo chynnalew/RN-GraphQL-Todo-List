@@ -55,15 +55,15 @@ const Todos = ({ isPublic, ...props }) => {
   
   return (
     <View style={styles.container}>
-      <LoadNewer show={this.state.newTodosExist && isPublic} toggleShow={this.dismissNewTodoBanner} styles={styles} isPublic={this.props.isPublic}/>
+      <LoadNewer show={newTodosExist && isPublic}  styles={styles} isPublic={isPublic}/>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContainer}>
         <FlatList
           data={data.todos}
-          renderItem={({item}) => <TodoItem item={item} isPublic={this.props.isPublic}/>}
+          renderItem={({item}) => <TodoItem item={item} isPublic={isPublic}/>}
           keyExtractor={(item) => item.id.toString()}
         />
         <LoadOlder
-          isPublic={this.props.isPublic}
+          isPublic={isPublic}
           styles={styles}
         />
       </ScrollView>
