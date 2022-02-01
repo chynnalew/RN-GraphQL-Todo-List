@@ -26,3 +26,6 @@ exports.resolver = {
 - many steps include "this.state.variable" when the variable is defined using useState(). refer to variables by declared name only.
 
 - full CRUD functionality working
+
+- current point in tutorial:
+https://hasura.io/learn/graphql/react-native/load-older/1-load-more-query/
