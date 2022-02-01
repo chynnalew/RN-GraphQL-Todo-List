@@ -24,3 +24,5 @@ exports.resolver = {
 ```
 - @apollo/react-hooks is deprecated, import from react-apollo for {useMutation, useQuery} instead
 - many steps include "this.state.variable" when the variable is defined using useState(). refer to variables by declared name only.
+
+- full CRUD functionality working
