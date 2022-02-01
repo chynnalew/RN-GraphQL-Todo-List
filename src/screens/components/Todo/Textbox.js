@@ -32,26 +32,26 @@ const INSERT_TODO = gql`
   }
 `
 
-const updateCache = (client, {data: {insert_todos}}) => {
-  const data = client.readQuery({
-    query: FETCH_TODOS,
-    variables: {
-      isPublic,
-    }
-  });
-  const newTodo = insert_todos.returning[0];
-  const newData = {
-    todos: [newTodo, ...data.todos]
-  }
-  client.writeQuery({
-    query: FETCH_TODOS,
-    variables:{
-      isPublic,
-    },
-    data: newData
-  });
-}
 const Textbox = ({isPublic}) => {
+  const updateCache = (client, {data: {insert_todos}}) => {
+    const data = client.readQuery({
+      query: FETCH_TODOS,
+      variables: {
+        isPublic,
+      }
+    });
+    const newTodo = insert_todos.returning[0];
+    const newData = {
+      todos: [newTodo, ...data.todos]
+    }
+    client.writeQuery({
+      query: FETCH_TODOS,
+      variables:{
+        isPublic,
+      },
+      data: newData
+    });
+  }
 
   const [text, setText] = React.useState('');
 
